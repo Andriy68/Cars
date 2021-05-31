@@ -1,0 +1,54 @@
+﻿@page "/orders"
+@using System.Net.Http
+@using System.Net.Http.Json
+@using FRONTEND.Data;
+@using DATA.Models;
+@inject HttpClient Http
+<div class="container-fluid">
+    <h1>Orders</h1>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Brand</th>
+                <th>Color</th>
+                <th>Price</th>
+                <th>Customer</th>
+                <th>Contacts</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var v in view)
+            {
+                <tr>
+                    <td>@v.Brand</td>
+                    <td>@v.Color</td>
+                    <td>@v.Price</td>
+                    <td>@v.NameSurname</td>
+                    <td>@v.Contacts</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@code {
+    private List<OrderView> view = new List<OrderView>();
+    protected override void OnInitialized()
+    {
+        var cars = Http.GetFromJsonAsync<List<Car>>("https://localhost:44342/api/Car/all").Result;
+        var descs = Http.GetFromJsonAsync<List<CarDesc>>("https://localhost:44342/api/Desc/all").Result;
+        var orders = Http.GetFromJsonAsync<List<Order>>("https://localhost:44342/api/Order/all").Result;
+        var customers = Http.GetFromJsonAsync <List<Customer>>("https://localhost:44342/api/Customer/all").Result;
+        foreach (var order in orders)
+        {
+            var car = cars.Where(c => c.Id == order.CarID).First();
+            view.Add(new OrderView
+            {
+                Price = car.Price,
+                Brand = descs.Where(d => d.CarID == car.Id).First().Brand,
+                Color = descs.Where(d => d.CarID == car.Id).First().Color,
+                NameSurname = customers.Where(d => d.Id == car.SellerID).First().NameSurname,
+                Contacts = customers.Where(d => d.Id == car.SellerID).First().Contacts
+            });
+        }
+    }
+}

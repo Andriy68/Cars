@@ -1,0 +1,35 @@
+﻿@page "/workers"
+@using System.Net.Http
+@using System.Net.Http.Json
+@using FRONTEND.Data;
+@using DATA.Models;
+@inject HttpClient Http
+<div class="container-fluid">
+    <h1>Staff</h1>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Salary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var v in view)
+            {
+                <tr>
+                    <td>@v.Id</td>
+                    <td>@v.NameSurname</td>
+                    <td>@v.Salary</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@code {
+    List<Worker> view = new List<Worker>();
+    protected override void OnInitialized()
+    {
+        view = Http.GetFromJsonAsync<List<Worker>>("https://localhost:44342/api/Worker/all").Result;
+    }
+}

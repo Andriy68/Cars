@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BUSINESS\BUSINESS.csproj" />
+    <ProjectReference Include="..\DAL\DATA.csproj" />
+    <ProjectReference Include="..\WEBAPI\WEBAPI.csproj" />
+  </ItemGroup>
+
+</Project>

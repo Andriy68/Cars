@@ -1,0 +1,47 @@
+﻿@page "/cars"
+@using System.Net.Http
+@using System.Net.Http.Json
+@using FRONTEND.Data;
+@using DATA.Models;
+@inject HttpClient Http
+<div class="container-fluid">
+    <h1>Cars</h1>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Brand</th>
+                <th>Color</th>
+                <th>Price</th>
+                <th>Seller Contacts</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var v in view)
+            {
+            <tr>
+                <td>@v.Brand</td>
+                <td>@v.Color</td>
+                <td>@v.Price</td>
+                <td>@v.Contacts</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@code {
+    private List<CarView> view = new List<CarView>();
+    protected override void OnInitialized()
+    {
+        var cars = Http.GetFromJsonAsync<List<Car>>("https://localhost:44342/api/Car/all").Result;
+        var descs = Http.GetFromJsonAsync<List<CarDesc>>("https://localhost:44342/api/Desc/all").Result;
+        var sellers = Http.GetFromJsonAsync<List<Seller>>("https://localhost:44342/api/Seller/all").Result;
+        foreach(var car in cars){
+            view.Add(new CarView {
+                    Price = car.Price,
+                    Brand = descs.Where(d => d.CarID == car.Id).First().Brand,
+                    Color = descs.Where(d => d.CarID == car.Id).First().Color,
+                    Contacts = sellers.Where(d => d.Id == car.SellerID).First().Contacts
+            });
+        }
+    }
+}
